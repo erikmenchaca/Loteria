@@ -1,0 +1,304 @@
+classDiagram
+    class LoteriaGame {
+        -Deck deck
+        -List~Player~ players
+        -Caller caller
+        -GameState gameState
+        -List~WinningPattern~ patterns
+        -LoteriaCard currentCard
+        -List~LoteriaCard~ calledCards
+        -int maxPlayers
+        +LoteriaGame(int maxPlayers)
+        +addPlayer(Player player) void
+        +startGame() void
+        +callNextCard() LoteriaCard
+        +checkForWinner() Player
+        +isGameOver() boolean
+        +getWinner() Player
+        +getCurrentCard() LoteriaCard
+        +getCalledCards() List~LoteriaCard~
+        +validateWin(Player player, WinningPattern pattern) boolean
+    }
+
+    class Deck {
+        -List~LoteriaCard~ cards
+        -List~LoteriaCard~ remainingCards
+        -List~LoteriaCard~ calledCards
+        +Deck()
+        +initializeDeck() void
+        +shuffle() void
+        +drawCard() LoteriaCard
+        +hasMoreCards() boolean
+        +reset() void
+        +getCard(int cardNumber) LoteriaCard
+        +getAllCards() List~LoteriaCard~
+        +getRemainingCount() int
+    }
+
+    class LoteriaCard {
+        -int cardNumber
+        -String name
+        -String spanishName
+        -String riddle
+        -CardCategory category
+        +LoteriaCard(int cardNumber, String name, String spanishName, String riddle, CardCategory category)
+        +getCardNumber() int
+        +getName() String
+        +getSpanishName() String
+        +getRiddle() String
+        +getCategory() CardCategory
+        +equals(Object obj) boolean
+        +toString() String
+    }
+
+    class Player {
+        -String name
+        -List~PlayerBoard~ boards
+        -int score
+        -boolean isReady
+        +Player(String name)
+        +getName() String
+        +addBoard(PlayerBoard board) void
+        +getBoards() List~PlayerBoard~
+        +markCard(LoteriaCard card) void
+        +claimWin(WinningPattern pattern) boolean
+        +getScore() int
+        +addScore(int points) void
+        +setReady(boolean ready) void
+        +isReady() boolean
+    }
+
+    class PlayerBoard {
+        -LoteriaCard[][] grid
+        -boolean[][] markers
+        -int size
+        -Player owner
+        +PlayerBoard(int size, Player owner)
+        +generateBoard(Deck deck) void
+        +markCard(LoteriaCard card) boolean
+        +unmarkCard(LoteriaCard card) boolean
+        +hasCard(LoteriaCard card) boolean
+        +isMarked(int row, int col) boolean
+        +getCard(int row, int col) LoteriaCard
+        +checkPattern(WinningPattern pattern) boolean
+        +getMarkedCount() int
+        +getSize() int
+        +getOwner() Player
+    }
+
+    class Caller {
+        -Deck deck
+        -List~String~ callingPhrases
+        -Random random
+        +Caller(Deck deck)
+        +callCard() LoteriaCard
+        +announceCard(LoteriaCard card) String
+        +getCallingPhrase(LoteriaCard card) String
+        +hasMoreCards() boolean
+    }
+
+    class WinningPattern {
+        -String name
+        -PatternType type
+        -List~Position~ requiredPositions
+        -int pointValue
+        +WinningPattern(String name, PatternType type, List~Position~ positions, int pointValue)
+        +getName() String
+        +getType() PatternType
+        +getRequiredPositions() List~Position~
+        +getPointValue() int
+        +checkPattern(PlayerBoard board) boolean
+        +isValidForBoardSize(int size) boolean
+    }
+
+    class Position {
+        -int row
+        -int col
+        +Position(int row, int col)
+        +getRow() int
+        +getCol() int
+        +equals(Object obj) boolean
+        +hashCode() int
+        +toString() String
+    }
+
+    class GameStatistics {
+        -int totalGames
+        -Map~Player, Integer~ playerWins
+        -Map~LoteriaCard, Integer~ cardFrequency
+        -List~GameResult~ gameHistory
+        +GameStatistics()
+        +recordGame(GameResult result) void
+        +getPlayerWins(Player player) int
+        +getTotalGames() int
+        +getMostCalledCard() LoteriaCard
+        +getWinRate(Player player) double
+        +exportStatistics() String
+    }
+
+    class GameResult {
+        -Player winner
+        -List~Player~ participants
+        -WinningPattern winningPattern
+        -int totalCardsPlayed
+        -long gameDurationMs
+        -DateTime gameDate
+        +GameResult(Player winner, List~Player~ participants, WinningPattern pattern)
+        +getWinner() Player
+        +getParticipants() List~Player~
+        +getWinningPattern() WinningPattern
+        +getTotalCardsPlayed() int
+        +getGameDuration() long
+        +getGameDate() DateTime
+    }
+
+    class LoteriaException {
+        +LoteriaException(String message)
+        +LoteriaException(String message, Throwable cause)
+    }
+
+    %% Enumerations
+    class GameState {
+        <<enumeration>>
+        WAITING_FOR_PLAYERS
+        READY_TO_START
+        IN_PROGRESS
+        PAUSED
+        FINISHED
+        CANCELLED
+    }
+
+    class PatternType {
+        <<enumeration>>
+        FULL_CARD
+        FOUR_CORNERS
+        HORIZONTAL_LINE
+        VERTICAL_LINE
+        DIAGONAL_LINE
+        CROSS
+        X_PATTERN
+        BORDER
+        CENTER_SQUARE
+        CUSTOM
+    }
+
+    class CardCategory {
+        <<enumeration>>
+        PEOPLE
+        ANIMALS
+        OBJECTS
+        NATURE
+        FOOD
+        ACTIVITIES
+        SYMBOLS
+        MISC
+    }
+
+    %% Static Data Class
+    class LoteriaCards {
+        <<utility>>
+        +EL_GALLO() LoteriaCard
+        +EL_DIABLO() LoteriaCard
+        +LA_DAMA() LoteriaCard
+        +EL_CATRIN() LoteriaCard
+        +EL_PARAGUAS() LoteriaCard
+        +LA_SIRENA() LoteriaCard
+        +LA_ESCALERA() LoteriaCard
+        +LA_BOTELLA() LoteriaCard
+        +EL_BARRIL() LoteriaCard
+        +EL_ARBOL() LoteriaCard
+        +EL_MELON() LoteriaCard
+        +EL_VALIENTE() LoteriaCard
+        +EL_GORRITO() LoteriaCard
+        +LA_MUERTE() LoteriaCard
+        +LA_PERA() LoteriaCard
+        +LA_BANDERA() LoteriaCard
+        +EL_BANDOLON() LoteriaCard
+        +EL_VIOLONCELLO() LoteriaCard
+        +LA_GARZA() LoteriaCard
+        +EL_PAJARO() LoteriaCard
+        +LA_MANO() LoteriaCard
+        +LA_BOTA() LoteriaCard
+        +LA_LUNA() LoteriaCard
+        +EL_COTORRO() LoteriaCard
+        +EL_BORRACHO() LoteriaCard
+        +EL_NEGRITO() LoteriaCard
+        +EL_CORAZON() LoteriaCard
+        +LA_SANDIA() LoteriaCard
+        +EL_TAMBOR() LoteriaCard
+        +EL_CAMARON() LoteriaCard
+        +LAS_JARAS() LoteriaCard
+        +EL_MUSICO() LoteriaCard
+        +LA_ARANA() LoteriaCard
+        +EL_SOLDADO() LoteriaCard
+        +LA_ESTRELLA() LoteriaCard
+        +EL_CAZO() LoteriaCard
+        +EL_MUNDO() LoteriaCard
+        +EL_APACHE() LoteriaCard
+        +EL_NOPAL() LoteriaCard
+        +EL_ALACRAN() LoteriaCard
+        +LA_ROSA() LoteriaCard
+        +LA_CALAVERA() LoteriaCard
+        +LA_CAMPANA() LoteriaCard
+        +EL_CANTARITO() LoteriaCard
+        +EL_VENADO() LoteriaCard
+        +EL_SOL() LoteriaCard
+        +LA_CORONA() LoteriaCard
+        +LA_CHALUPA() LoteriaCard
+        +EL_PINO() LoteriaCard
+        +EL_PESCADO() LoteriaCard
+        +LA_PALMA() LoteriaCard
+        +LA_MACETA() LoteriaCard
+        +EL_ARPA() LoteriaCard
+        +LA_RANA() LoteriaCard
+        +getAllCards() List~LoteriaCard~
+        +getCardByNumber(int number) LoteriaCard
+        +getCardsByCategory(CardCategory category) List~LoteriaCard~
+    }
+
+    class StandardPatterns {
+        <<utility>>
+        +createFullCard(int boardSize) WinningPattern
+        +createFourCorners(int boardSize) WinningPattern
+        +createHorizontalLine(int boardSize, int row) WinningPattern
+        +createVerticalLine(int boardSize, int col) WinningPattern
+        +createDiagonalLine(int boardSize, boolean leftToRight) WinningPattern
+        +createCrossPattern(int boardSize) WinningPattern
+        +createXPattern(int boardSize) WinningPattern
+        +createBorderPattern(int boardSize) WinningPattern
+        +createCenterSquare(int boardSize) WinningPattern
+        +getAllStandardPatterns(int boardSize) List~WinningPattern~
+    }
+
+    %% Relationships
+    LoteriaGame --> Deck : uses
+    LoteriaGame --> Player : manages multiple
+    LoteriaGame --> Caller : has
+    LoteriaGame --> GameState : has
+    LoteriaGame --> WinningPattern : uses multiple
+    LoteriaGame --> LoteriaCard : tracks current
+    LoteriaGame --> GameStatistics : maintains
+    LoteriaGame --> LoteriaException : throws
+
+    Deck --> LoteriaCard : contains 54
+    LoteriaCard --> CardCategory : has
+
+    Player --> PlayerBoard : owns multiple
+
+    PlayerBoard --> LoteriaCard : contains grid of
+    PlayerBoard --> Position : uses for marking
+    PlayerBoard --> Player : belongs to
+
+    Caller --> Deck : draws from
+    Caller --> LoteriaCard : announces
+
+    WinningPattern --> PatternType : has
+    WinningPattern --> Position : defines multiple
+    WinningPattern --> PlayerBoard : validates against
+
+    GameStatistics --> GameResult : stores multiple
+    GameResult --> Player : involves multiple
+    GameResult --> WinningPattern : records winning
+
+    LoteriaCards --> LoteriaCard : creates all 54
+    StandardPatterns --> WinningPattern : creates standard
