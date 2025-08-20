@@ -1,13 +1,14 @@
 module loteria {
     // Required JavaFX modules
     requires javafx.controls;
-    // No fxml needed since the GUI is programmatic
-    // requires javafx.fxml;
+    requires javafx.fxml;
 
-    // Make your model and view packages available
+    // Make your model package available to other modules
     exports loteria.model;
+
+    // FIX: Export your view package so JavaFX can launch it
     exports loteria.view;
 
-    // This is not needed if you aren't using FXML
-    // opens loteria.view to javafx.fxml;
+    // Open your view package to the FXML loader for reflection
+    opens loteria.view to javafx.fxml;
 }
