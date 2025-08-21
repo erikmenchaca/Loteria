@@ -61,14 +61,18 @@ public class LoteriaGame {
             throw new LoteriaException("Cannot start a game with no players.");
         }
 
-        deck.reset(); // Ensure deck is fresh and shuffled
-
-        // FIX: The model is now responsible for generating its own boards.
+        // Reset the deck to ensure it's fresh
+        deck.reset();
+        
+        // Generate boards for all players
         for (Player player : players) {
             for (PlayerBoard board : player.getBoards()) {
                 board.generateBoard(this.deck);
             }
         }
+        
+        // Reset the deck again for the caller to use during the game
+        deck.reset();
 
         this.gameState = GameState.IN_PROGRESS;
     }
