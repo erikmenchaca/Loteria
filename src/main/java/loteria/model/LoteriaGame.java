@@ -2,7 +2,9 @@ package loteria.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The main orchestrator for the Lotería game.
@@ -32,8 +34,7 @@ public class LoteriaGame {
         this.currentCard = null;
     }
 
-    public Deck getDeck()
-    {
+    public Deck getDeck() {
         return deck;
     }
 
@@ -63,14 +64,14 @@ public class LoteriaGame {
 
         // Reset the deck to ensure it's fresh
         deck.reset();
-        
+
         // Generate boards for all players
         for (Player player : players) {
             for (PlayerBoard board : player.getBoards()) {
                 board.generateBoard(this.deck);
             }
         }
-        
+
         // Reset the deck again for the caller to use during the game
         deck.reset();
 
@@ -135,5 +136,47 @@ public class LoteriaGame {
 
     public GameState getGameState() {
         return gameState;
+    }
+
+    public int remainingCards() {
+        return deck.getRemainingCount();
+    }
+
+    /**
+     * Returns the number of marked cards for a specific player.
+     */
+    public int countMarked(Player player) {
+        int total = 0;
+        for (PlayerBoard board : player.getBoards()) {
+            total += board.getMarkedCount();  // PlayerBoard has countMarked()
+        }
+        return total;
+    }
+
+    /**
+     * Returns statistics about the current game state.
+     * 
+     * @return a map containing useful info like called cards, remaining cards, and player marks
+     */
+    public Map<String, Object> getStatistics() {
+        Map<String, Object> stats = new HashMap<>();
+
+        // Called cards
+        stats.put("calledCards", List.copyOf(calledCards));
+
+        // Remaining cards in deck
+        stats.put("remainingCards", deck.getRemainingCount());
+
+        // Marks per player
+        Map<String, Integer> playerMarks = new HashMap<>();
+        for (Player player : players) {
+            playerMarks.put(player.getName(), countMarked(player));
+        }
+        stats.put("playerMarks", playerMarks);
+
+        // Winner info
+        stats.put("winner", winner != null ? winner.getName() : null);
+
+        return stats;
     }
 }
